@@ -41,17 +41,13 @@ passport.use(
       const usuario = await usuarios.buscarUsuarioPorEmail(registerData.email)
       if (!usuario) {
         registerData.password = UtilsSession.createHash(registerPassword)
-        console.log('register4', registerData)
         await usuarios.guardarUsuario(registerData)
 
         done(null, registerData)
       } else {
-        console.log('llegue a null false')
         done(null, false)
       }
-    } catch {
-
-	}
+    } catch {}
   })
 )
 
@@ -72,7 +68,6 @@ passport.use(
       }
 
       done(null, usuario)
-
     } catch (err) {
       done(err)
     }
@@ -81,11 +76,11 @@ passport.use(
 
 passport.serializeUser((user, done) => done(null, user.id))
 passport.deserializeUser(async (id, done) => {
-    const { email } = await usuarios.getById(id)
-    done(null, {
-      email
-    })
+  const { email } = await usuarios.getById(id)
+  done(null, {
+    email,
   })
+})
 
 //serializar y deserializar
 /* 
@@ -107,12 +102,12 @@ app.use(
 )
 
 app.use(
-	'/api/sessions/login',
-	passport.authenticate('login', {
-	  successRedirect: '/main',
-	  failureRedirect: '/login-error',
-	})
-  )
+  '/api/sessions/login',
+  passport.authenticate('login', {
+    successRedirect: '/main',
+    failureRedirect: '/login-error',
+  })
+)
 
 // SESSIONS
 
