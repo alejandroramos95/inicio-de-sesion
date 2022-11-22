@@ -1,4 +1,5 @@
 const mongoose = require('mongoose')
+const { db } = require('../models/UsuariosModel.js')
 const UsuariosModel = require('../models/UsuariosModel.js')
 
 module.exports = class Usuarios {
@@ -14,6 +15,7 @@ module.exports = class Usuarios {
   }
 
   async guardarUsuario(dataUsuario) {
+    console.log('asd', dataUsuario)
     await this.conectarDB()
     const newUser = new UsuariosModel(dataUsuario)
     await newUser.save()
@@ -21,7 +23,13 @@ module.exports = class Usuarios {
 
   async buscarUsuarioPorEmail(email) {
     await this.conectarDB()
-    const usuario = await UsuariosModel.findOne({ email: email }, { _id: false, __v: false })
+    const usuario = await UsuariosModel.findOne({ email: email })
+    return usuario
+  }
+
+  async getById(id){
+    await this.conectarDB()
+    const usuario = await UsuariosModel.findById(id)
     return usuario
   }
 }

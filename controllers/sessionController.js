@@ -1,3 +1,4 @@
+// USO DE EXPRESS-SESSION
 const express = require('express')
 const router = express.Router()
 const Usuarios = require('../services/Session.js')
@@ -5,7 +6,6 @@ const Usuarios = require('../services/Session.js')
 const usuarios = new Usuarios()
 
 // REGISTRO
-
 router.post('/register', async (req, res) => {
   const registerData = { email: req.body.registerEmail, password: req.body.registerPassword }
   const usuario = await usuarios.buscarUsuarioPorEmail(registerData.email)
@@ -15,7 +15,7 @@ router.post('/register', async (req, res) => {
   } else {
     res.redirect('/register-error')
   }
-})
+}) */
 
 // VALIDACION, LOGIN Y CREACION DE SESION
 router.post('/login', async (req, res) => {
@@ -30,10 +30,13 @@ router.post('/login', async (req, res) => {
   } else {
     res.redirect('/login-error')
   }
-})
+}) */
 // ELIMINAR SESSION
+
 router.get('/logout', (req, res) => {
+
   req.session.destroy((err) => {
+    
     if (err) {
       return res.json({ status: 'Logout ERROR', body: err })
     }
