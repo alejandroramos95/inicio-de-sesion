@@ -1,0 +1,60 @@
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TEST</title>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css"
+      integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l"
+      crossorigin="anonymous"
+    />
+    <link rel="stylesheet" href="css/estilos.css" />
+  </head>
+  <body>
+    <div class="container mt-3">
+      <div class="jumbotron">
+        <!-- TABLA DE PRODUCTOS -->
+        <div class="jumbotron">
+          <h1>Vista de Productos</h1>
+          <br />
+            <div class="table-responsive">
+              <table class="table table-dark">
+                <tr> <th>Nombre</th> <th>Precio</th> <th>Foto</th></tr>
+              </table>
+              <table class="table table-dark" id="vista_productos">
+              </table>
+            </div>    
+        </div>
+      </div>
+    </div>
+    <script>
+function getProdTest(){
+    fetch('/api/productos-test')
+        .then(async (response) => {
+            const data = await response.json()
+            renderProds(data)
+        })
+}
+
+getProdTest()
+
+function renderProds(prods) {
+  const html = prods
+    .map((prod) => {
+      return `<tr>
+                    <td>${prod.title}</td>
+                    <td>${prod.price}</td>
+                    <td><img
+                        width="50"
+                        src=${prod.thumbnail}
+                        alt="not found"
+                      /></td>
+                  </tr>`
+    })
+    .join(' ')
+  document.getElementById('vista_productos').innerHTML = html
+}
+    </script>
+  </body>
+</html>
