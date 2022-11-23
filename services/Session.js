@@ -2,7 +2,7 @@ const mongoose = require('mongoose')
 const { db } = require('../models/UsuariosModel.js')
 const UsuariosModel = require('../models/UsuariosModel.js')
 
-module.exports = class Usuarios {
+module.exports = class SessionService {
   constructor() {
     this.url =
       'mongodb+srv://coderBackend:coderBackendPW@clustercoderbackend.tct9by1.mongodb.net/cursobackend2022?retryWrites=true&w=majority'

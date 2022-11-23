@@ -4,8 +4,8 @@ const UtilsSession = require('./services/UtilsSession.js')
 //NUEVOS IMPORTS DESAFIO INICIO SESION
 const passport = require('passport')
 const LocalStrategy = require('passport-local').Strategy
-const Usuarios = require('./services/Session.js')
-const usuariosCollection = new Usuarios()
+const SessionService = require('./services/Session.js')
+const sessionService = new SessionService()
 
 const { Server: HttpServer } = require('http')
 const { Server: IOServer } = require('socket.io')
@@ -40,30 +40,20 @@ passport.use(
       passReqToCallback: true,
     },
     async (req, emailUser, passwordUser, done) => {
-      const usuario = await usuariosCollection.buscarUsuarioPorEmail(emailUser)
+      const usuario = await sessionService.buscarUsuarioPorEmail(emailUser)
       if (!usuario) return done(null, false)
-      if (!UtilsSession.isValidPassword(usuario, passwordUser))
-        return done(null, false)
+      if (!UtilsSession.isValidPassword(usuario, passwordUser)) return done(null, false)
       return done(null, usuario)
     }
   )
 )
-
-/* passport.serializeUser((user, done) => {
-  done(null, user.id)
-})
-
-passport.deserializeUser(async (id, done) => {
-  const user = await usuariosCollection.buscarPorId(id)
-  done(null, user)
-}) */
 
 passport.serializeUser((user, done) => {
   done(null, user.email)
 })
 
 passport.deserializeUser(async (email, done) => {
-  const user = await usuariosCollection.buscarUsuarioPorEmail(email)
+  const user = await sessionService.buscarUsuarioPorEmail(email)
   done(null, user)
 })
 
@@ -73,7 +63,10 @@ app.post(
     successRedirect: '/main',
     failureRedirect: '/login-error',
     passReqToCallback: true,
-  })
+  }),
+  (req, res) => {
+    res.cookie('userEmail', req.session.passport.user)
+  }
 )
 
 // SESSIONS
@@ -89,10 +82,7 @@ let urlValidation = {
 }
 
 app.use((req, res, next) => {
-  if(req.session?.passport)
-  res.cookie('userEmail', req.session.passport.user)
   if (req.session?.passport || urlValidation[req.originalUrl]) {
-    
     next()
   } else {
     res.sendFile(__dirname + `/public/login.html`)
