@@ -51,13 +51,14 @@ passport.use(
 )
 
 passport.serializeUser((user, done) => {
-  console.log('pase por aca')
+  //console.log('pase por aca', user)
   done(null, user.id)
 })
 
 passport.deserializeUser(async (id, done) => {
-  console.log('y por aca?')
+  //console.log('y por aca?', id)
   const user = await usuariosCollection.buscarPorId(id)
+  //console.log('volvi a pasar', user)
   done(null, user)
 })
 
@@ -83,7 +84,10 @@ let urlValidation = {
 
 app.use((req, res, next) => {
   //console.log('originalURL', req.originalUrl)
-  if (req.session.email || urlValidation[req.originalUrl]) {
+  //console.log('reqsession', req.session)
+  //console.log('reqsession', req.session.passport)
+
+  if (req.session || urlValidation[req.originalUrl]) {
     next()
   } else {
     res.sendFile(__dirname + `/public/login.html`)
