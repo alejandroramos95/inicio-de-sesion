@@ -67,7 +67,7 @@ function renderProds(data) {
     prev[name] = value.join('=')
     return prev
   }, {})
-  //console.log('front obj spliteado', obj)
+  console.log('front obj spliteado', obj)
   let html = decodeURIComponent(obj?.userEmail)
   document.getElementById('getUserEmail').innerHTML = html
 })()

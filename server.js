@@ -29,7 +29,7 @@ app.use(UtilsSession.createOnMongoStore())
 app.use(passport.initialize())
 app.use(passport.session())
 
-// login strategy
+// LOGIN STRATEGY
 
 passport.use(
   'login',
@@ -43,22 +43,27 @@ passport.use(
       const usuario = await usuariosCollection.buscarUsuarioPorEmail(emailUser)
       if (!usuario) return done(null, false)
       if (!UtilsSession.isValidPassword(usuario, passwordUser))
-      //if (!usuario.password === passwordUser)
         return done(null, false)
       return done(null, usuario)
     }
   )
 )
 
-passport.serializeUser((user, done) => {
-  //console.log('pase por aca', user)
+/* passport.serializeUser((user, done) => {
   done(null, user.id)
 })
 
 passport.deserializeUser(async (id, done) => {
-  //console.log('y por aca?', id)
   const user = await usuariosCollection.buscarPorId(id)
-  //console.log('volvi a pasar', user)
+  done(null, user)
+}) */
+
+passport.serializeUser((user, done) => {
+  done(null, user.email)
+})
+
+passport.deserializeUser(async (email, done) => {
+  const user = await usuariosCollection.buscarUsuarioPorEmail(email)
   done(null, user)
 })
 
@@ -84,11 +89,10 @@ let urlValidation = {
 }
 
 app.use((req, res, next) => {
-  //console.log('originalURL', req.originalUrl)
-  //console.log('reqsession', req.session)
-  //console.log('reqsession', req.session.passport)
-
+  if(req.session?.passport)
+  res.cookie('userEmail', req.session.passport.user)
   if (req.session?.passport || urlValidation[req.originalUrl]) {
+    
     next()
   } else {
     res.sendFile(__dirname + `/public/login.html`)
