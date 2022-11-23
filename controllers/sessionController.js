@@ -6,7 +6,7 @@ const Usuarios = require('../services/Session.js')
 const usuarios = new Usuarios()
 
 // REGISTRO
-/* router.post('/register', async (req, res) => {
+router.post('/register', async (req, res) => {
   const registerData = { email: req.body.registerEmail, password: req.body.registerPassword }
   const usuario = await usuarios.buscarUsuarioPorEmail(registerData.email)
   if (!usuario) {
@@ -15,7 +15,7 @@ const usuarios = new Usuarios()
   } else {
     res.redirect('/register-error')
   }
-}) */
+})
 
 // VALIDACION, LOGIN Y CREACION DE SESION
 /* router.post('/login', async (req, res) => {
@@ -31,9 +31,10 @@ const usuarios = new Usuarios()
     res.redirect('/login-error')
   }
 }) */
+
 // ELIMINAR SESSION
-/* 
-router.get('/logout', (req, res) => {
+
+/* router.get('/logout', (req, res) => {
 
   req.session.destroy((err) => {
     
@@ -42,6 +43,6 @@ router.get('/logout', (req, res) => {
     }
   })
   res.redirect('/login')
-})
- */
+}) */
+
 module.exports = router

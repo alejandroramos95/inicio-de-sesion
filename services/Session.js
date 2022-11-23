@@ -15,7 +15,6 @@ module.exports = class Usuarios {
   }
 
   async guardarUsuario(dataUsuario) {
-    console.log('asd', dataUsuario)
     await this.conectarDB()
     const newUser = new UsuariosModel(dataUsuario)
     await newUser.save()
@@ -23,11 +22,11 @@ module.exports = class Usuarios {
 
   async buscarUsuarioPorEmail(email) {
     await this.conectarDB()
-    const usuario = await UsuariosModel.findOne({ email: email })
+    const usuario = await UsuariosModel.findOne({ email })
     return usuario
   }
 
-  async getById(id){
+  async buscarPorId(id){
     await this.conectarDB()
     const usuario = await UsuariosModel.findById(id)
     return usuario
