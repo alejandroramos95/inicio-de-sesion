@@ -1,11 +1,7 @@
 const express = require('express')
 const cookieParser = require('cookie-parser')
 const UtilsSession = require('./services/UtilsSession.js')
-//NUEVOS IMPORTS DESAFIO INICIO SESION
 const passport = require('passport')
-const LocalStrategy = require('passport-local').Strategy
-const SessionService = require('./services/Session.js')
-const sessionService = new SessionService()
 
 const { Server: HttpServer } = require('http')
 const { Server: IOServer } = require('socket.io')
@@ -29,58 +25,18 @@ app.use(UtilsSession.createOnMongoStore())
 app.use(passport.initialize())
 app.use(passport.session())
 
-// LOGIN STRATEGY
-
-passport.use(
-  'login',
-  new LocalStrategy(
-    {
-      usernameField: 'emailUser',
-      passwordField: 'passwordUser',
-      passReqToCallback: true,
-    },
-    async (req, emailUser, passwordUser, done) => {
-      const usuario = await sessionService.buscarUsuarioPorEmail(emailUser)
-      if (!usuario) return done(null, false)
-      if (!UtilsSession.isValidPassword(usuario, passwordUser)) return done(null, false)
-      return done(null, usuario)
-    }
-  )
-)
-
-passport.serializeUser((user, done) => {
-  done(null, user.email)
-})
-
-passport.deserializeUser(async (email, done) => {
-  const user = await sessionService.buscarUsuarioPorEmail(email)
-  done(null, user)
-})
-
-app.post(
-  '/api/sessions/login',
-  passport.authenticate('login', {
-    successRedirect: '/main',
-    failureRedirect: '/login-error',
-    passReqToCallback: true,
-  }),
-  (req, res) => {
-    res.cookie('userEmail', req.session.passport.user)
-  }
-)
-
 // SESSIONS
 
 const sessions = require('./controllers/sessionController.js')
 app.use('/api/sessions', sessions)
 
+// Validar sesion o uso de vistas sin restriccion
 let urlValidation = {
   '/logout': true,
   '/register': true,
   '/register-error': true,
   '/login-error': true,
 }
-
 app.use((req, res, next) => {
   if (req.session?.passport || urlValidation[req.originalUrl]) {
     next()

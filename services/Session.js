@@ -1,6 +1,7 @@
 const mongoose = require('mongoose')
 const { db } = require('../models/UsuariosModel.js')
 const UsuariosModel = require('../models/UsuariosModel.js')
+const UtilsSession = require('./UtilsSession.js')
 
 module.exports = class SessionService {
   constructor() {
@@ -14,21 +15,19 @@ module.exports = class SessionService {
     await this.mongodb(this.url)
   }
 
-  async guardarUsuario(dataUsuario) {
-    await this.conectarDB()
-    const newUser = new UsuariosModel(dataUsuario)
-    await newUser.save()
-  }
-
   async buscarUsuarioPorEmail(email) {
     await this.conectarDB()
     const usuario = await UsuariosModel.findOne({ email })
     return usuario
   }
 
-  async buscarPorId(id){
+  async registrarUsuario(usuario) {
     await this.conectarDB()
-    const usuario = await UsuariosModel.findById(id)
-    return usuario
+    const userExist = await UsuariosModel.findOne({ email: usuario.email })
+    if (userExist) return false
+    usuario.password = UtilsSession.createHash(usuario.password)
+    const newUser = new UsuariosModel(usuario)
+    await newUser.save()
+    return true
   }
 }
