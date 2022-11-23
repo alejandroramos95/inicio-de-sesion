@@ -61,7 +61,7 @@ function renderProds(data) {
 
 //
 (function getSessionUserEmail() {
-  //console.log("front cookie index", document.cookie)
+  console.log("front cookie index", document.cookie)
   let obj = document.cookie.split('; ').reduce((prev, current) => {
     const [name, ...value] = current.split('=')
     prev[name] = value.join('=')

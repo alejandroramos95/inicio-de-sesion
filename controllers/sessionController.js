@@ -2,6 +2,7 @@
 const express = require('express')
 const router = express.Router()
 const Usuarios = require('../services/Session.js')
+const UtilsSession = require('../services/UtilsSession.js')
 
 const usuarios = new Usuarios()
 
@@ -10,6 +11,7 @@ router.post('/register', async (req, res) => {
   const registerData = { email: req.body.registerEmail, password: req.body.registerPassword }
   const usuario = await usuarios.buscarUsuarioPorEmail(registerData.email)
   if (!usuario) {
+    registerData.password = UtilsSession.createHash(registerData.password)
     await usuarios.guardarUsuario(registerData)
     res.redirect('/login')
   } else {
@@ -34,7 +36,7 @@ router.post('/register', async (req, res) => {
 
 // ELIMINAR SESSION
 
-/* router.get('/logout', (req, res) => {
+router.get('/logout', (req, res) => {
 
   req.session.destroy((err) => {
     
@@ -43,15 +45,6 @@ router.post('/register', async (req, res) => {
     }
   })
   res.redirect('/login')
-}) */
-
-router.get('/logout', function (req, res, next) {
-  req.logout(function (err) {
-    if (err) {
-      return res.json({ status: 'Logout ERROR', body: err })
-    }
-    res.redirect('/login')
-  })
 })
 
 module.exports = router

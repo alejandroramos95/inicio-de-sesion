@@ -42,8 +42,8 @@ passport.use(
     async (req, emailUser, passwordUser, done) => {
       const usuario = await usuariosCollection.buscarUsuarioPorEmail(emailUser)
       if (!usuario) return done(null, false)
-      if (!usuario.password === passwordUser)
-        //if (!verifyPassword(usuario, passwordUser))
+      if (!UtilsSession.isValidPassword(usuario, passwordUser))
+      //if (!usuario.password === passwordUser)
         return done(null, false)
       return done(null, usuario)
     }
@@ -77,6 +77,7 @@ const sessions = require('./controllers/sessionController.js')
 app.use('/api/sessions', sessions)
 
 let urlValidation = {
+  '/logout': true,
   '/register': true,
   '/register-error': true,
   '/login-error': true,
@@ -87,7 +88,7 @@ app.use((req, res, next) => {
   //console.log('reqsession', req.session)
   //console.log('reqsession', req.session.passport)
 
-  if (req.session || urlValidation[req.originalUrl]) {
+  if (req.session?.passport || urlValidation[req.originalUrl]) {
     next()
   } else {
     res.sendFile(__dirname + `/public/login.html`)
